@@ -1,53 +1,110 @@
-function generarDatos() {
-    const voltaje = (110 + Math.random() * 10).toFixed(1);
-    const corriente = (2 + Math.random() * 2).toFixed(2);
-    const potencia = (voltaje * corriente).toFixed(2);
-    const consumo = (Math.random() * 0.5).toFixed(3);
-    const fecha = new Date().toLocaleString();
-    return { voltaje, corriente, potencia, consumo, fecha };
+// ------------------------------
+// Simulación de datos del monitor
+// ------------------------------
+
+function generarLecturaSimulada() {
+  // Rango de ejemplo para voltaje, corriente, etc.
+  const voltaje = (110 + Math.random() * 20).toFixed(1); // 110 - 130 V
+  const corriente = (1 + Math.random() * 10).toFixed(2); // 1 - 11 A
+  const potencia = (voltaje * corriente * 0.8).toFixed(2); // factor de potencia aproximado
+  const consumo = (Math.random() * 10).toFixed(3);        // 0 - 10 kWh
+
+  return {
+    voltaje: parseFloat(voltaje),
+    corriente: parseFloat(corriente),
+    potencia: parseFloat(potencia),
+    consumo: parseFloat(consumo),
+  };
 }
 
-function actualizarDashboard(datos) {
-    document.getElementById("voltaje").textContent = ${datos.voltaje} V;
-    document.getElementById("corriente").textContent = ${datos.corriente} A;
-    document.getElementById("potencia").textContent = ${datos.potencia} W;
-    document.getElementById("consumo").textContent = ${datos.consumo} kWh;
+// ------------------------------
+// Lógica de alertas y recomendaciones
+// ------------------------------
 
-    const alertaEl = document.getElementById("alerta");
-    const recoEl = document.getElementById("recomendacion");
-    alertaEl.textContent = "";
-    recoEl.textContent = "";
+function evaluarAlertas(potencia, consumo) {
+  const alertaElem = document.getElementById("alerta");
+  const recomendacionElem = document.getElementById("recomendacion");
 
-    if (parseFloat(datos.potencia) > 500) {
-        alertaEl.textContent = "⚠ Potencia elevada detectada. Revisar las cargas conectadas.";
-    }
-    if (parseFloat(datos.consumo) > 0.4) {
-        recoEl.textContent = "💡 Recomendación: ajustar horarios de uso para reducir el consumo.";
-    }
+  // Limpiar mensajes anteriores
+  alertaElem.textContent = "";
+  recomendacionElem.textContent = "";
+
+  // Potencia alta
+  if (potencia > 500) {
+    alertaElem.textContent =
+      "⚠ Potencia elevada detectada en el prototipo. Se sugiere revisar las cargas simuladas.";
+  }
+
+  // Consumo acumulado alto
+  if (consumo > 5) {
+    recomendacionElem.textContent =
+      "💡 Recomendación del prototipo: reducir tiempos de uso y desconectar equipos innecesarios para bajar el consumo.";
+  }
 }
 
-function guardarHistorial(datos) {
-    let historial = JSON.parse(localStorage.getItem("historial")) || [];
-    historial.push(datos);
-    localStorage.setItem("historial", JSON.stringify(historial));
-    mostrarHistorial();
+// ------------------------------
+// Actualización del dashboard
+// ------------------------------
+
+function actualizarDashboard() {
+  const datos = generarLecturaSimulada();
+
+  // Actualizar tarjetas
+  document.getElementById("voltaje").textContent =
+    datos.voltaje.toFixed(1) + " V";
+  document.getElementById("corriente").textContent =
+    datos.corriente.toFixed(2) + " A";
+  document.getElementById("potencia").textContent =
+    datos.potencia.toFixed(2) + " W";
+  document.getElementById("consumo").textContent =
+    datos.consumo.toFixed(3) + " kWh";
+
+  // Evaluar alertas según los valores simulados
+  evaluarAlertas(datos.potencia, datos.consumo);
+
+  // Registrar en historial visual
+  agregarFilaHistorial(datos);
 }
 
-function mostrarHistorial() {
-    let historial = JSON.parse(localStorage.getItem("historial")) || [];
-    const tbody = document.querySelector("#historial tbody");
-    tbody.innerHTML = "";
-    historial.slice(-10).forEach(d => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = <td>${d.fecha}</td><td>${d.voltaje}</td><td>${d.corriente}</td><td>${d.potencia}</td><td>${d.consumo}</td>;
-        tbody.appendChild(tr);
-    });
+// ------------------------------
+// Historial (solo visual, en la tabla)
+// ------------------------------
+
+function agregarFilaHistorial(datos) {
+  const tbody = document.getElementById("historial-body");
+  const fila = document.createElement("tr");
+
+  const ahora = new Date();
+  const fechaHora = ahora.toLocaleString("es-CO", {
+    dateStyle: "short",
+    timeStyle: "medium",
+  });
+
+  fila.innerHTML = `
+    <td>${fechaHora}</td>
+    <td>${datos.voltaje.toFixed(1)}</td>
+    <td>${datos.corriente.toFixed(2)}</td>
+    <td>${datos.potencia.toFixed(2)}</td>
+    <td>${datos.consumo.toFixed(3)}</td>
+  `;
+
+  // Agregar la fila al inicio
+  tbody.prepend(fila);
+
+  // Limitar a 10 registros visibles
+  if (tbody.rows.length > 10) {
+    tbody.deleteRow(tbody.rows.length - 1);
+  }
 }
 
-document.getElementById("actualizar").addEventListener("click", () => {
-    const datos = generarDatos();
-    actualizarDashboard(datos);
-    guardarHistorial(datos);
+// ------------------------------
+// Inicio del prototipo
+// ------------------------------
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Actualizar al abrir
+  actualizarDashboard();
+
+  // Actualizar cada 10 segundos
+  setInterval(actualizarDashboard, 10000);
 });
-
-mostrarHistorial();

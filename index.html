@@ -1,61 +1,85 @@
-index.html
+mary
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard Energético IoT</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <title>Monitor Energético IoT - Prototipo Web</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Manifest de la PWA -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0077cc">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Icono -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 </head>
 <body>
 <div class="container">
-    <h1>⚡ Monitor Energético IoT</h1>
+    <h1>⚡ Monitor Energético IoT (Prototipo Web)</h1>
+    <p class="subtitulo">
+        Prototipo de dashboard web que simula un sistema de monitoreo energético IoT,
+        mostrando voltaje, corriente, potencia y consumo, junto con alertas y recomendaciones.
+    </p>
+
     <div class="cards">
         <div class="card">
             <h2>Voltaje</h2>
-            <p class="valor" id="voltaje">0 V</p>
+            <p class="valor" id="voltaje">-- V</p>
         </div>
         <div class="card">
             <h2>Corriente</h2>
-            <p class="valor" id="corriente">0 A</p>
+            <p class="valor" id="corriente">-- A</p>
         </div>
         <div class="card">
             <h2>Potencia</h2>
-            <p class="valor" id="potencia">0 W</p>
+            <p class="valor" id="potencia">-- W</p>
         </div>
         <div class="card consumo">
             <h2>Consumo (kWh)</h2>
-            <p class="valor" id="consumo">0 kWh</p>
+            <p class="valor" id="consumo">-- kWh</p>
         </div>
     </div>
 
-    <button id="actualizar">🔄 Actualizar Datos</button>
+    <p id="alerta" class="alerta"></p>
+    <p id="recomendacion" class="recomendacion"></p>
 
-    <p class="alerta" id="alerta"></p>
-    <p class="recomendacion" id="recomendacion"></p>
-
-    <h2>Historial de mediciones</h2>
-    <table id="historial">
+    <h2 class="seccion-h2">Historial de mediciones (simulado)</h2>
+    <table class="tabla-historial">
         <thead>
             <tr>
-                <th>Fecha/Hora</th>
+                <th>Fecha / Hora</th>
                 <th>Voltaje (V)</th>
                 <th>Corriente (A)</th>
                 <th>Potencia (W)</th>
                 <th>Consumo (kWh)</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="historial-body">
+            <!-- Filas generadas por script.js -->
+        </tbody>
     </table>
+
+    <p class="nota">
+        * Este prototipo web utiliza datos simulados en JavaScript para representar el comportamiento
+        del monitor energético. El objetivo es mostrar la interfaz, las alertas y el historial dentro
+        de una aplicación web ejecutable.
+    </p>
 </div>
 
+<!-- Script principal -->
 <script src="script.js"></script>
+
+<!-- Registro del Service Worker -->
 <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js')
-    .then(() => console.log('Service Worker registrado correctamente'))
-    .catch(err => console.log('Error en SW:', err));
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("sw.js").catch(function(err) {
+            console.log("Error al registrar el Service Worker:", err);
+        });
+    });
 }
 </script>
 </body>
