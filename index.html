@@ -1,0 +1,62 @@
+index.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Energético IoT</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0077cc">
+</head>
+<body>
+<div class="container">
+    <h1>⚡ Monitor Energético IoT</h1>
+    <div class="cards">
+        <div class="card">
+            <h2>Voltaje</h2>
+            <p class="valor" id="voltaje">0 V</p>
+        </div>
+        <div class="card">
+            <h2>Corriente</h2>
+            <p class="valor" id="corriente">0 A</p>
+        </div>
+        <div class="card">
+            <h2>Potencia</h2>
+            <p class="valor" id="potencia">0 W</p>
+        </div>
+        <div class="card consumo">
+            <h2>Consumo (kWh)</h2>
+            <p class="valor" id="consumo">0 kWh</p>
+        </div>
+    </div>
+
+    <button id="actualizar">🔄 Actualizar Datos</button>
+
+    <p class="alerta" id="alerta"></p>
+    <p class="recomendacion" id="recomendacion"></p>
+
+    <h2>Historial de mediciones</h2>
+    <table id="historial">
+        <thead>
+            <tr>
+                <th>Fecha/Hora</th>
+                <th>Voltaje (V)</th>
+                <th>Corriente (A)</th>
+                <th>Potencia (W)</th>
+                <th>Consumo (kWh)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script src="script.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log('Service Worker registrado correctamente'))
+    .catch(err => console.log('Error en SW:', err));
+}
+</script>
+</body>
+</html>
